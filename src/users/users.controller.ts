@@ -13,6 +13,7 @@ import { CreateUserDto } from "./dtos/create-user.dto";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dtos/update-user.dto";
+import { SerializeInterceptor } from "../intercenptors/serialize.interceptor";
 
 
 @ApiTags("auth")
@@ -27,20 +28,21 @@ export class UsersController {
     this.usersService.create(body.email, body.password);
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(SerializeInterceptor)
   @Get("/:id")
-  findUser(@Param("id") id: string) {
-    return this.usersService.findById(parseInt(id));
+  async findUser(@Param("id") id: string) {
+    console.log('handler is running.')
+    return await this.usersService.findById(parseInt(id));
   }
 
   @Delete("/:id")
-  deleteUser(@Param("id") id: string) {
-    return this.usersService.remove(parseInt(id));
+  async deleteUser(@Param("id") id: string) {
+    return await this.usersService.remove(parseInt(id));
   }
 
   @Patch("/:id")
   @ApiBody({ type: UpdateUserDto })
-  updateUser(@Param("id") id: string, @Body() body: UpdateUserDto) {
-    return this.usersService.update(parseInt(id), body);
+  async updateUser(@Param("id") id: string, @Body() body: UpdateUserDto) {
+    return await this.usersService.update(parseInt(id), body);
   }
 }
