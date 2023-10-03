@@ -3,6 +3,7 @@ import { CreateUserDto } from "./dtos/create-user.dto";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
 import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dtos/update-user.dto";
+import { optionalRequire } from "@nestjs/core/helpers/optional-require";
 
 @ApiTags("auth")
 @Controller("auth")
