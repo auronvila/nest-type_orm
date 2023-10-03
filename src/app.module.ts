@@ -14,6 +14,7 @@ import { Report } from "./reports/report.entity";
     TypeOrmModule.forRoot({
       type: "sqlite",
       database: "db.sqlite",
+      logging: true,
       entities: [User, Report],
       synchronize: true
     })],
