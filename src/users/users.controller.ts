@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Patch,
-  Post, Session
+  Post, Session, UseInterceptors
 } from "@nestjs/common";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
@@ -14,11 +14,15 @@ import { UpdateUserDto } from "./dtos/update-user.dto";
 import { Serialize } from "../intercenptors/serialize.interceptor";
 import { UserDto } from "./dtos/user.dto";
 import { AuthService } from "./auth.service";
+import { CurrentUser } from "./decorators/current-user.decorator";
+import { CurrentUserInterceptor } from "./interceptors/current-user.interceptor";
+import { User } from "./user.entity";
 
 
 @Serialize(UserDto)
 @ApiTags("auth")
 @Controller("auth")
+@UseInterceptors(CurrentUserInterceptor)
 export class UsersController {
   constructor(private usersService: UsersService,
               private authService: AuthService) {
@@ -34,13 +38,18 @@ export class UsersController {
   //   return session.color;
   // }
 
+  // @Get("/whoAmI")
+  // whoAmI(@Session() session: any) {
+  //   return this.usersService.findById(session.userId);
+  // }
+
   @Get("/whoAmI")
-  whoAmI(@Session() session: any) {
-    return this.usersService.findById(session.userId);
+  whoAmI(@CurrentUser() user: User) {
+    return user;
   }
 
-  @Post('/signout')
-  signOut(@Session() session:any){
+  @Post("/signout")
+  signOut(@Session() session: any) {
     session.userId = null;
   }
 
