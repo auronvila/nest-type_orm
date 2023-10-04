@@ -8,7 +8,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly repo: Repository<User>
-  ) {}
+  ) {
+  }
 
   create(email: string, password: string) {
     const user = this.repo.create({ email, password });
@@ -21,6 +22,9 @@ export class UsersService {
   }
 
   async findById(id: number) {
+    if (!id) {
+      return null;
+    }
     return await this.repo.findOneBy({ id });
   }
 

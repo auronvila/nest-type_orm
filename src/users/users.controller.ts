@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Patch,
-  Post
+  Post, Session
 } from "@nestjs/common";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
@@ -24,16 +24,40 @@ export class UsersController {
               private authService: AuthService) {
   }
 
+  // @Get("/colors/:color")
+  // setColor(@Param("color") color: string, @Session() session: any) {
+  //   session.color = color;
+  // }
+  //
+  // @Get("colors")
+  // getColor(@Session() session: any) {
+  //   return session.color;
+  // }
+
+  @Get("/whoAmI")
+  whoAmI(@Session() session: any) {
+    return this.usersService.findById(session.userId);
+  }
+
+  @Post('/signout')
+  signOut(@Session() session:any){
+    session.userId = null;
+  }
+
   @Post("/signup")
   @ApiBody({ type: CreateUserDto })
-  createUser(@Body() body: CreateUserDto) {
-    return this.authService.signup(body.email, body.password);
+  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signup(body.email, body.password);
+    session.userId = user.id;
+    return user;
   }
 
   @Post("/signin")
   @ApiBody({ type: CreateUserDto })
-  signin(@Body() body: CreateUserDto) {
-    return this.authService.signin(body.email, body.password);
+  async signin(@Body() body: CreateUserDto, @Session() session: any) {
+    const user = await this.authService.signin(body.email, body.password);
+    session.userId = user.id;
+    return user;
   }
 
   @Get("/:id")
