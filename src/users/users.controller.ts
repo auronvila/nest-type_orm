@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Patch,
-  Post, Session, UseInterceptors
+  Post, Session, UseGuards
 } from "@nestjs/common";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { ApiBody, ApiTags } from "@nestjs/swagger";
@@ -15,14 +15,13 @@ import { Serialize } from "../intercenptors/serialize.interceptor";
 import { UserDto } from "./dtos/user.dto";
 import { AuthService } from "./auth.service";
 import { CurrentUser } from "./decorators/current-user.decorator";
-import { CurrentUserInterceptor } from "./interceptors/current-user.interceptor";
 import { User } from "./user.entity";
+import { AuthGuard } from "../guards/auth.guard";
 
 
 @Serialize(UserDto)
 @ApiTags("auth")
 @Controller("auth")
-@UseInterceptors(CurrentUserInterceptor)
 export class UsersController {
   constructor(private usersService: UsersService,
               private authService: AuthService) {
@@ -38,12 +37,8 @@ export class UsersController {
   //   return session.color;
   // }
 
-  // @Get("/whoAmI")
-  // whoAmI(@Session() session: any) {
-  //   return this.usersService.findById(session.userId);
-  // }
-
   @Get("/whoAmI")
+  @UseGuards(AuthGuard)
   whoAmI(@CurrentUser() user: User) {
     return user;
   }
