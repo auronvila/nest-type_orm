@@ -66,7 +66,6 @@ export class UsersController {
 
   @Get("/:id")
   async findUser(@Param("id") id: string) {
-    console.log("handler is running.");
     return await this.usersService.findById(parseInt(id));
   }
 
